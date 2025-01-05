@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Linear Equation Solver (2 Variables)</title>
+  <style>
+    /* Basic CSS Styling */
+    body {
+      font-family: sans-serif;
+      text-align: center;
+    }
+    #container {
+      margin: 20px auto;
+      width: 350px; 
+      border: 1px solid #ff000c;
+      padding: 20px;
+      border-radius: 5px;
+      background-color: #f0f0f0; 
+    }
+    input[type="number"] {
+      width: 50px; 
+      padding: 5px;
+      margin: 5px 0;
+      border: 1px solid #ff000f;
+      border-radius: 3px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #F50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 10px;
+      font-weight: bold;
+      color: green;
+    }
+    #error {
+      color: red;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="container">
+    <h1>Linear Equation Solver (2 Variables)</h1>
+
+    <div id="equationInputs">
+      <label for="a1">Equation 1:</label><br>
+      <input type="number" id="a1" placeholder="a1"> x + 
+      <input type="number" id="b1" placeholder="b1"> y = 
+      <input type="number" id="d1" placeholder="d1"><br><br>
+
+      <label for="a2">Equation 2:</label><br>
+      <input type="number" id="a2" placeholder="a2"> x + 
+      <input type="number" id="b2" placeholder="b2"> y = 
+      <input type="number" id="d2" placeholder="d2"><br><br>
+    </div>
+
+    <button onclick="solve()">Solve</button>
+
+    <div id="result"></div>
+    <div id="error"></div>
+  </div>
+
+  <script>
+    function solve() {
+      const resultDiv = document.getElementById("result");
+      const errorDiv = document.getElementById("error");
+
+      try {
+        const a1 = parseFloat(document.getElementById('a1').value);
+        const b1 = parseFloat(document.getElementById('b1').value);
+        const c1 = parseFloat(document.getElementById('d1').value);
+        const a2 = parseFloat(document.getElementById('a2').value);
+        const b2 = parseFloat(document.getElementById('b2').value);
+        const c2 = parseFloat(document.getElementById('d2').value);
+
+        const determinant = a1 * b2 - a2 * b1;
+
+        if (determinant === 0) {
+          resultDiv.innerHTML = "No unique solution.";
+          errorDiv.innerHTML = "";
+          return;
+        }
+
+        const x = (c1 * b2 - c2 * b1) / determinant;
+        const y = (a1 * c2 - a2 * c1) / determinant;
+
+        resultDiv.innerHTML = `Solution: x = ${x.toFixed(2)}, y = ${y.toFixed(2)}`;
+        errorDiv.innerHTML = ""; 
+
+      } catch (error) {
+        errorDiv.innerHTML = "Error: " + error.message;
+        resultDiv.innerHTML = "";
+      }
+    }
+  </script>
+
+</body>
+</html>

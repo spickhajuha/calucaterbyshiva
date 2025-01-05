@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta charset="UTF-8">
+  <title>4 भिन्न कैलकुलेटर</title>
+  <style>
+    /* CSS styles for better presentation */
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    .calculator {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin: 20px auto;
+      width: 350px;
+      background-color: #f2f2f2;
+      border-radius: 10px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .input-group input {
+      width: 40%;
+      padding: 5px;
+      margin: 0 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .input-group span {
+      font-size: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4F5;
+      color: black;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <h1>4 भिन्न कैलकुलेटर</h1>
+
+    <div class="input-group">
+      <input type="number" id="num11" placeholder="अंश ">
+      <span>/</span>
+      <input type="number" id="den11" placeholder="हर ">
+    </div>
+
+    <select id="operator1">
+      <option value="add">+</option>
+      <option value="subtract">-</option>
+      <option value="multiply">×</option>
+      <option value="divide">÷</option>
+    </select>
+
+    <div class="input-group">
+      <input type="number" id="num12" placeholder="अंश ">
+      <span>/</span>
+      <input type="number" id="den12" placeholder="हर ">
+    </div>
+
+    <select id="operator2">
+      <option value="add">+</option>
+      <option value="subtract">-</option>
+      <option value="multiply">×</option>
+      <option value="divide">÷</option>
+    </select>
+
+    <div class="input-group">
+      <input type="number" id="num13" placeholder="अंश ">
+      <span>/</span>
+      <input type="number" id="den13" placeholder="हर ">
+    </div>
+
+    <select id="operator3">
+      <option value="add">+</option>
+      <option value="subtract">-</option>
+      <option value="multiply">×</option>
+      <option value="divide">÷</option>
+    </select>
+
+    <div class="input-group">
+      <input type="number" id="num14" placeholder="अंश ">
+      <span>/</span>
+      <input type="number" id="den14" placeholder="हर ">
+    </div>
+
+    <button onclick="calculate()">गणना करें</button>
+    <p>परिणाम:</p>
+    <input type="text" id="result" readonly>
+
+    <p>दशमलव: <span id="decimalResult"></span></p>
+    <p>प्रतिशत: <span id="percentageResult"></span></p>
+  </div>
+
+  <script>
+  function calculate() {
+  const num11 = parseInt(document.getElementById('num11').value);
+  const den11 = parseInt(document.getElementById('den11').value);
+  const num12 = parseInt(document.getElementById('num12').value);
+  const den12 = parseInt(document.getElementById('den12').value);
+  const num13 = parseInt(document.getElementById('num13').value);
+  const den13 = parseInt(document.getElementById('den13').value);
+  const num14 = parseInt(document.getElementById('num14').value);
+  const den14 = parseInt(document.getElementById('den14').value);
+
+  const operator1 = document.getElementById('operator1').value;
+  const operator2 = document.getElementById('operator2').value;
+  const operator3 = document.getElementById('operator3').value;
+
+  let result1Num, result1Den;
+
+  switch (operator1) {
+    case "add":
+      result1Num = (num11 * den12) + (num12 * den11);
+      result1Den = den11 * den12;
+      break;
+    case "subtract":
+      result1Num = (num11 * den12) - (num12 * den11);
+      result1Den = den11 * den12;
+      break;
+    case "multiply":
+      result1Num = num11 * num12;
+      result1Den = den11 * den12;
+      break;
+    case "divide":
+      if (den12 === 0) {
+        alert("भाजक शून्य नहीं हो सकता।");
+        return;
+      }
+      result1Num = num11 * den12;
+      result1Den = den11 * den12; 
+      break;
+    default:
+      alert("अमान्य ऑपरेटर");
+      return;
+  }
+
+  let result2Num, result2Den;
+
+  switch (operator2) {
+    case "add":
+      result2Num = (result1Num * den13) + (num13 * result1Den);
+      result2Den = result1Den * den13;
+      break;
+    case "subtract":
+      result2Num = (result1Num * den13) - (num13 * result1Den);
+      result2Den = result1Den * den13;
+      break;
+    case "multiply":
+      result2Num = result1Num * num13;
+      result2Den = result1Den * den13;
+      break;
+    case "divide":
+      if (den13 === 0) {
+        alert("भाजक शून्य नहीं हो सकता।");
+        return;
+      }
+      result2Num = result1Num * den13;
+      result2Den = result1Den * num13;
+      break;
+    default:
+      alert("अमान्य ऑपरेटर");
+      return;
+  }
+
+  let result3Num, result3Den;
+
+  switch (operator3) {
+    case "add":
+      result3Num = (result2Num * den14) + (num14 * result2Den);
+      result3Den = result2Den * den14;
+      break;
+    case "subtract":
+      result3Num = (result2Num * den14) - (num14 * result2Den);
+      result3Den = result2Den * den14;
+      break;
+    case "multiply":
+      result3Num = result2Num * num14;
+      result3Den = result2Den * den14;
+      break;
+    case "divide":
+      if (den14 === 0) {
+        alert("भाजक शून्य नहीं हो सकता।");
+        return;
+      }
+      result3Num = result2Num * den14;
+      result3Den = result2Den * num14;
+      break;
+    default:
+      alert("अमान्य ऑपरेटर");
+      return;
+  }
+
+  const gcd = findGCD(result3Num, result3Den);
+  result3Num /= gcd;
+  result3Den /= gcd;
+
+  document.getElementById('result').value = result3Num + "/" + result3Den;
+
+  const decimal = result3Num / result3Den;
+  document.getElementById('decimalResult').textContent = decimal.toFixed(2);
+
+  const percentage = (decimal * 100).toFixed(2) + "%";
+  document.getElementById('percentageResult').textContent = percentage;
+}
+
+function findGCD(a, b) {
+  if (b === 0) {
+    return a;
+  }
+  return findGCD(b, a % b);
+}
+</script>

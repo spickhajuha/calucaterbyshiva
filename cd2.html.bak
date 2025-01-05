@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dynamic Code Generator and Decoder</title>
+<style>
+body {
+    font-family: sans-serif;
+    text-align: center;
+}
+
+textarea {
+    width: 400px;
+    height: 150px;
+    margin: 10px;
+    padding: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 10px;
+    cursor: pointer;
+}
+
+#result {
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 400px;
+    margin: 0 auto;
+}
+</style>
+</head>
+<body>
+
+<h1>Dynamic Code Generator and Decoder</h1>
+
+<textarea id="inputText" placeholder="Enter your text here"></textarea><br>
+
+<button onclick="generateRandomCode()">Generate Code</button>
+<button onclick="decodeCode()">Decode Code</button>
+
+<div id="result"></div>
+
+<script>
+function generateRandomCode() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const length = 10; // Adjust code length as needed
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    document.getElementById("result").innerHTML = "<b>Generated Code:</b> " + result;
+}
+
+// Since there's no real encoding happening in generateRandomCode(), 
+// decoding is not possible in this simple example. 
+// You would need to implement a specific encoding/decoding algorithm.
+
+function decodeCode() {
+    // This function would typically involve reversing the encoding process 
+    // used in generateRandomCode(). 
+
+    // As a placeholder, display a message indicating that decoding is not 
+    // possible with the current implementation.
+    document.getElementById("result").innerHTML = "<b>Decoding is not supported for this type of code.</b>"; 
+}
+</script>
+
+</body>
+</html>

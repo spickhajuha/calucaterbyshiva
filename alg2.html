@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Linear Equation Solver (3 Variables)</title>
+  <style>
+    /* Basic CSS Styling */
+    body {
+      font-family: sans-serif;
+      text-align: center;
+    }
+    #container {
+      margin: 20px auto;
+      width: 350px; 
+      border: 1px solid #f00f00;
+      padding: 20px;
+      border-radius: 5px;
+    }
+    input[type="number"] {
+      width: 50px; 
+      padding: 5px;
+      margin: 5px 0;
+      border: 1px solid #ff000f;
+      border-radius: 3px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #f50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    #error {
+      color: red;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="container">
+    <h1>Linear Equation Solver (3 Variables)</h1>
+
+    <label for="a1">Equation 1:</label><br>
+    <input type="number" id="a1" placeholder="a1"> x + 
+    <input type="number" id="b1" placeholder="b1"> y + 
+    <input type="number" id="c1" placeholder="c1"> z = 
+    <input type="number" id="d1" placeholder="d1"><br><br>
+
+    <label for="a2">Equation 2:</label><br>
+    <input type="number" id="a2" placeholder="a2"> x + 
+    <input type="number" id="b2" placeholder="b2"> y + 
+    <input type="number" id="c2" placeholder="c2"> z = 
+    <input type="number" id="d2" placeholder="d2"><br><br>
+
+    <label for="a3">Equation 3:</label><br>
+    <input type="number" id="a3" placeholder="a3"> x + 
+    <input type="number" id="b3" placeholder="b3"> y + 
+    <input type="number" id="c3" placeholder="c3"> z = 
+    <input type="number" id="d3" placeholder="d3"><br><br>
+
+    <button onclick="solve()">Solve</button>
+
+    <div id="result"></div>
+    <div id="error"></div>
+  </div>
+
+  <script>
+    function solve() {
+      // Get input values
+      var a1 = parseFloat(document.getElementById('a1').value);
+      var b1 = parseFloat(document.getElementById('b1').value);
+      var c1 = parseFloat(document.getElementById('c1').value);
+      var d1 = parseFloat(document.getElementById('d1').value);
+      var a2 = parseFloat(document.getElementById('a2').value);
+      var b2 = parseFloat(document.getElementById('b2').value);
+      var c2 = parseFloat(document.getElementById('c2').value);
+      var d2 = parseFloat(document.getElementById('d2').value);
+      var a3 = parseFloat(document.getElementById('a3').value);
+      var b3 = parseFloat(document.getElementById('b3').value);
+      var c3 = parseFloat(document.getElementById('c3').value);
+      var d3 = parseFloat(document.getElementById('d3').value);
+
+      // Calculate determinant
+      var determinant = a1 * (b2 * c3 - b3 * c2) - b1 * (a2 * c3 - a3 * c2) + c1 * (a2 * b3 - a3 * b2);
+
+      // Check for special cases
+      if (determinant === 0) {
+        document.getElementById('result').innerHTML = "No unique solution.";
+        return;
+      }
+
+      // Calculate x, y, and z
+      var x = ((d1 * (b2 * c3 - b3 * c2)) - (b1 * (d2 * c3 - d3 * c2)) + (c1 * (d2 * b3 - d3 * b2))) / determinant;
+      var y = ((a1 * (d2 * c3 - d3 * c2)) - (d1 * (a2 * c3 - a3 * c2)) + (c1 * (a2 * d3 - a3 * d2))) / determinant;
+      var z = ((a1 * (b2 * d3 - b3 * d2)) - (b1 * (a2 * d3 - a3 * d2)) + (d1 * (a2 * b3 - a3 * b2))) / determinant;
+
+      // Display results
+      document.getElementById('result').innerHTML = "Solution: x = " + x.toFixed(2) + ", y = " + y.toFixed(2) + ", z = " + z.toFixed(2);
+    }
+  </script>
+
+</body>
+</html>

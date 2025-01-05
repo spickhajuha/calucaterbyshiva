@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Chatbot</title>
+  <style><body>
+
+//
+
+/* Chat Container Styles */
+.chat-container {
+  flex: 1; /* Occupy remaining space */
+  overflow-y: auto; /* Enable scrolling */
+  padding: 1px;
+  border-radius: 5px;
+  background-color: #ff000f; /* Adjust as needed */
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 0px;
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto;
+  position: fixed; /* Position at bottom */
+  bottom: 60px;
+  height: calc(100vh - 134.5px); /* Calculate chat container height */
+}
+
+/* Message Container Styles (not explicitly defined; consider adding) */
+.message-container {
+  height: 100%; /* Adjust as needed */
+  overflow-y: auto; /* Enable scrolling */
+}
+
+/* Message Styles */
+.message {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-end; /* Align message content to bottom */
+}
+
+/* User Message Styles */
+.user-message {
+  background-color: #fff776; /* Light yellow background */
+  color: #008000; /* Green text */
+  padding: 10px;
+  border-radius: 5px;
+  width: 70%;
+  margin-left: auto; /* Align to right */
+}
+
+/* Bot Message Styles */
+.bot-message {
+  background-color: #efa; /* Light blue background */
+  color: #000080; /* Dark blue text */
+  padding: 10px;
+  border-radius: 5px;
+  width: 70%;
+}
+
+/* Message Indicator Styles */
+.user-message::before,
+.bot-message::before {
+  content: ""; /* Decorative element */
+  display: block;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: #ddd;
+  margin-left: 1px; /* Adjust for alignment */
+}
+
+.user-message::before {
+  background-color: #ffcaf9; /* Light blue indicator for user */
+  margin-left: auto; /* Align to right */
+}
+
+.bot-message::before {
+  background-color: #ca5; /* Light green indicator for bot */
+}
+
+/* Message Content Styles */
+.message p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Input Container Styles */
+.input-container {
+  position: fixed;
+  bottom: 0;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  background-color: #fff; /* Light background */
+  
+  padding: 10px;
+  justify-content: space-between; /* Space buttons evenly */
+}
+
+/* User Input Styles */
+#user-input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  margin-right: 5px; /* Small margin to right */
+  width: 100%; /* Adjust width as needed */
+}
+
+/* Button Container Styles */
+.button-container {
+  display: flex; /* Arrange buttons horizontally */
+}
+
+/* Send Button Styles */
+.send-button {
+  padding: 25px 25px;
+  border: none;
+  border-radius: 5px;
+  background-color: #fff; /* Green background */
+  color: white;
+  cursor: pointer;
+  position: relative; /* Position the button relative to itself */
+  overflow: hidden; /* Hide overflowing content */
+  text-align: center; /* Center text horizontally */
+}
+
+.send-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("https://cdn-icons-png.flaticon.com/128/9217/9217990.png"); /* Replace with your image URL */
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  opacity: 0.9; /* Adjust opacity as needed */
+  transition: opacity 0.99s ease-in-out;
+}
+
+.send-button:hover::after {
+  opacity: 0.99; /* Increase opacity on hover */
+}
+
+/* Clear Button Styles */
+.clear-button {
+  padding: 25px 25px;
+  border: none;
+  border-radius: 5px;
+  background-color: #fff; /* Green background */
+  color: white;
+  cursor: pointer;
+  position: relative; /* Position the button relative to itself */
+  overflow: hidden; /* Hide overflowing content */
+  text-align: center; /* Center text horizontally */
+}
+
+.clear-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("https://cdn-icons-png.flaticon.com/128/561/561226.png"); /* Replace with your image URL */
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  opacity: 0.9; /* Adjust opacity as needed */
+  transition: opacity 0.99s ease-in-out;
+}
+
+.send-button:hover::after {
+  opacity: 0.99; /* Increase opacity on hover */
+}
+
+  </style>
+</head>
+
+
+  
+  <div class="chat-container">
+    <div class="message-container" id="chat-container"> 
+      <div class="message bot-message">
+        <p>नमस्ते! मैं आपकी सहायता के लिए तैयार हूं। आप मुझसे गणित की गणनायें पूछ सकते हैं।</p> 
+      </div>
+    </div>
+  </div>
+
+  <div class="input-container">
+    <input type="text" id="user-input" placeholder="Enter your message" autofocus>
+    <div class="button-container">
+      <button class="send-button" onclick="sendMessage()"></button> 
+      <button class="clear-button" onclick="clearChat()"></button> 
+    </div>
+  </div>
+<body>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.6.0/math.min.js"></script> 
+  <script>
+const chatContainer = document.getElementById('chat-container');
+const userInput = document.getElementById('user-input');
+
+userInput.focus();
+
+function sendMessage() {
+  const userMessage = userInput.value.trim().toLowerCase();
+
+  if (userMessage === '') {
+    return;
+  }
+
+  // Create a new message element for the user
+  const userMessageElement = document.createElement('div');
+  userMessageElement.classList.add('message', 'user-message');
+  userMessageElement.innerHTML = `<p>${userMessage}</p>`;
+  chatContainer.appendChild(userMessageElement);
+
+  let botResponse;
+
+  // Extract math expressions from user message
+  const mathExpressions = extractMathExpressions(userMessage);
+
+  if (mathExpressions && mathExpressions.length > 0) {
+    try {
+      const answers = [];
+      for (const expression of mathExpressions) {
+        const sanitizedExpression = sanitizeExpression(expression);
+        const answer = math.evaluate(sanitizedExpression); 
+        answers.push(answer);
+      }
+      botResponse = 
+        answers.length === 1 
+          ? `Your answer is ${answers[0]}` 
+          : `Your answers are: ${answers.join(', ')}`; 
+    } catch (error) {
+      botResponse = "Invalid math expression.";
+    }
+  } else if (userMessage.includes('√x')) { 
+    try {
+      const x = parseFloat(userMessage.replace('√', '').trim()); 
+      const result = calculateSquareRoot(x); 
+      botResponse = `For √${x}, the result is: ${result}`; 
+    } catch (error) {
+      botResponse = "Error calculating square root of x. Please provide a valid value for x."; 
+    }
+  } else if (
+    userMessage === 'hi' ||
+    userMessage === 'hello' ||
+    userMessage === 'namaste' ||
+    userMessage === 'radhe' ||
+    userMessage === 'krishna'
+  ) {
+    botResponse = `${userMessage}, how can I help you? You can ask me math calculations.`;
+  } else {
+    botResponse = "Invalid question. You can ask me math calculations or greetings like 'hi' or 'hello'.";
+  }
+
+  // Create a new message element for the bot
+  const botMessageElement = document.createElement('div');
+  botMessageElement.classList.add('message', 'bot-message');
+  botMessageElement.innerHTML = `<p>${botResponse}</p>`;
+  chatContainer.appendChild(botMessageElement);
+
+  chatContainer.scrollTop = chatContainer.scrollHeight; 
+  userInput.value = '';
+}
+
+function clearChat() {
+  chatContainer.innerHTML = ''; // Clear the chat container
+}
+
+// Function to extract math expressions from text
+function extractMathExpressions(text) {
+  const regex = /([\d\.\+\²\¹\³\⁴\⁵\⁶\⁷\⁸\⁹\⁰\^\π\Π\÷\×\%\-\*\/\(\)\s√\d]+)/g; 
+  return text.match(regex) || []; 
+}
+
+// Function to sanitize and prepare expressions for evaluation
+function sanitizeExpression(expression) {
+  return expression
+    .replace(/sqrt\(/g, 'Math.sqrt(') 
+    .replace(/cbrt\(/g, 'Math.cbrt(') 
+    .replace(/π/g, '*3.141592653589793238462643383279502884197') 
+    .replace(/Π/g, '3.141592653589793238462643383279502884197') 
+        .replace(/of/g, '*') 
+    .replace(/÷/g, '/') 
+.replace(/¹/g, '^1')
+.replace(/²/g, '^2')
+.replace(/³/g, '^3')
+.replace(/⁴/g, '^4')
+.replace(/⁵/g, '^5')
+.replace(/⁶/g, '^6')
+.replace(/⁷/g, '^7')
+.replace(/⁸/g, '^8')
+.replace(/⁹/g, '^9')
+.replace(/⁰/g, '^0')
+.replace(/¹⁰/g, '^10')
+.replace(/¹¹/g, '^11')
+.replace(/¹²/g, '^12')
+.replace(/¹³/g, '^13')
+.replace(/¹⁴/g, '^14')
+.replace(/¹⁵/g, '^15')
+.replace(/¹⁶/g, '^16')
+.replace(/¹⁷/g, '^17')
+.replace(/¹⁸/g, '^18')
+.replace(/¹⁹/g, '^19')
+.replace(/²⁰/g, '^20')
+.replace(/²¹/g, '^21')
+.replace(/²²/g, '^22')
+.replace(/²³/g, '^23')
+.replace(/²⁴/g, '^24')
+.replace(/²⁵/g, '^25')
+.replace(/²⁶/g, '^26')
+.replace(/²⁷/g, '^27')
+.replace(/²⁸/g, '^28')
+.replace(/²⁹/g, '^29')
+.replace(/³⁰/g, '^30')
+.replace(/³¹/g, '^31')
+.replace(/³²/g, '^32')
+.replace(/³³/g, '^33')
+.replace(/³⁴/g, '^34')
+.replace(/³⁵/g, '^35')
+.replace(/³⁶/g, '^36')
+.replace(/³⁷/g, '^37')
+.replace(/³⁸/g, '^38')
+.replace(/³⁹/g, '^39')
+.replace(/⁴⁰/g, '^40')
+.replace(/⁴¹/g, '^41')
+.replace(/⁴²/g, '^42')
+.replace(/⁴³/g, '^43')
+.replace(/⁴⁴/g, '^44')
+.replace(/⁴⁵/g, '^45')
+.replace(/⁴⁶/g, '^46')
+.replace(/⁴⁷/g, '^47')
+.replace(/⁴⁸/g, '^48')
+.replace(/⁴⁹/g, '^49')
+.replace(/⁵⁰/g, '^50')
+.replace(/⁵¹/g, '^51')
+.replace(/⁵²/g, '^52')
+.replace(/⁵³/g, '^53')
+.replace(/⁵⁴/g, '^54')
+.replace(/⁵⁵/g, '^55')
+.replace(/⁵⁶/g, '^56')
+.replace(/⁵⁷/g, '^57')
+.replace(/⁵⁸/g, '^58')
+.replace(/⁵⁹/g, '^59')
+.replace(/⁶⁰/g, '^60')
+.replace(/⁶¹/g, '^61')
+.replace(/⁶²/g, '^62')
+.replace(/⁶³/g, '^63')
+.replace(/⁶⁴/g, '^64')
+.replace(/⁶⁵/g, '^65')
+.replace(/⁶⁶/g, '^66')
+.replace(/⁶⁷/g, '^67')
+.replace(/⁶⁸/g, '^68')
+.replace(/⁶⁹/g, '^69')
+.replace(/⁷⁰/g, '^70')
+.replace(/⁷¹/g, '^71')
+.replace(/⁷²/g, '^72')
+.replace(/⁷³/g, '^73')
+.replace(/⁷⁴/g, '^74')
+.replace(/⁷⁵/g, '^75')
+.replace(/⁷⁶/g, '^76')
+.replace(/⁷⁷/g, '^77')
+.replace(/⁷⁸/g, '^78')
+.replace(/⁷⁹/g, '^79')
+.replace(/⁸⁰/g, '^80')
+.replace(/⁸¹/g, '^81')
+.replace(/⁸²/g, '^82')
+.replace(/⁸³/g, '^83')
+.replace(/⁸⁴/g, '^84')
+.replace(/⁸⁵/g, '^85')
+.replace(/⁸⁶/g, '^86')
+.replace(/⁸⁷/g, '^87')
+.replace(/⁸⁸/g, '^88')
+.replace(/⁸⁹/g, '^89')
+.replace(/⁹⁰/g, '^90')
+.replace(/⁹¹/g, '^91')
+.replace(/⁹²/g, '^92')
+.replace(/⁹³/g, '^93')
+.replace(/⁹⁴/g, '^94')
+.replace(/⁹⁵/g, '^95')
+.replace(/⁹⁶/g, '^96')
+.replace(/⁹⁷/g, '^97')
+.replace(/⁹⁸/g, '^98')
+.replace(/⁹⁹/g, '^99')
+.replace(/¹⁰⁰/g, '^100')
+
+    .replace(/×/g, '*') 
+    .replace(/√(\d+)/g, 'Math.sqrt($1)'); 
+}
+
+// Function to calculate square root
+function calculateSquareRoot(number) {
+  if (number < 0) {
+    return "Cannot calculate square root of a negative number.";
+  }
+  return Math.sqrt(number);
+}
+
+ </script>
+
+
+</html>

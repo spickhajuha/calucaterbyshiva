@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Trigonometry Calculator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Online trigonometry calculator for calculating sine, cosine, tangent, and their inverse functions.">
+  <meta name="keywords" content="trigonometry, calculator, sin, cos, tan, asin, acos, atan, sec, csc, cot, asec, acsc, acot, ln, log10, radians, degrees">
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    .calculator {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+      transition: all 0.2s ease-in-out; 
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+      transition: all 0.2s ease-in-out; 
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out; 
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    #result {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator">
+    <h1>Trigonometry Calculator</h1>
+
+    <label for="unit">Select Unit:</label>
+    <select id="unit" disabled> 
+      <option value="radians">Radians</option>
+      <option value="degrees">Degrees</option>
+    </select>
+
+    <label for="value">Enter Value:</label>
+    <input type="number" id="value" placeholder="Enter Value">
+
+    <label for="operation">Select Operation:</label>
+    <select id="operation">
+      <option value="sin">sin</option>
+      <option value="cos">cos</option>
+      <option value="tan">tan</option>
+      
+      <option value="sec">sec</option>
+      <option value="csc">cosec</option>
+      <option value="cot">cot</option>
+      <option value="asin">sin^-1</option>
+      <option value="acos">cos^-1</option>
+      <option value="atan">tan^-1</option>
+      <option value="asec">sec^-1</option>
+      <option value="acsc">cosec^-1</option>
+      <option value="acot">cot^-1</option>
+      <option value="ln">ln</option>
+      <option value="log10">log10</option>
+    </select>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <p id="result"></p>
+  </div>
+
+  <script>
+const operationSelect = document.getElementById('operation');
+const unitSelect = document.getElementById('unit');
+const valueInput = document.getElementById('value');
+
+// Check initial operation and enable/disable unit select accordingly
+if (operationSelect.value === 'sin' || 
+    operationSelect.value === 'cos' || 
+    operationSelect.value === 'tan' ||
+    operationSelect.value === 'cot' || 
+    operationSelect.value === 'sec' || 
+    operationSelect.value === 'csc' || 
+    operationSelect.value === 'asin' || 
+    operationSelect.value === 'acos' || 
+    operationSelect.value === 'atan' || 
+    operationSelect.value === 'acot' || 
+    operationSelect.value === 'asec' || 
+    operationSelect.value === 'acsc') {
+  unitSelect.disabled = false; 
+}
+
+operationSelect.addEventListener('change', () => {
+  if (operationSelect.value === 'sin' || 
+      operationSelect.value === 'cos' || 
+      operationSelect.value === 'tan' ||
+      operationSelect.value === 'cot' || 
+      operationSelect.value === 'sec' || 
+      operationSelect.value === 'csc' || 
+      operationSelect.value === 'asin' || 
+      operationSelect.value === 'acos' || 
+      operationSelect.value === 'atan' || 
+      operationSelect.value === 'acot' || 
+      operationSelect.value === 'asec' || 
+      operationSelect.value === 'acsc') {
+    unitSelect.disabled = false;
+  } else {
+    unitSelect.disabled = true;
+    unitSelect.value = "radians"; // Default to radians for other operations
+  }
+});
+
+function calculate() {
+  const value = parseFloat(valueInput.value);
+  const operation = operationSelect.value;
+  const unit = unitSelect.value;
+  let result;
+
+  switch (operation) {
+    case 'sin': 
+      result = unit === 'radians' ? Math.sin(value) : Math.sin(value * Math.PI / 180); 
+      break;
+    case 'cos': 
+      result = unit === 'radians' ? Math.cos(value) : Math.cos(value * Math.PI / 180); 
+      break;
+    case 'tan': 
+      result = unit === 'radians' ? Math.tan(value) : Math.tan(value * Math.PI / 180); 
+      break;
+    case 'asin': 
+      result = Math.asin(value) * (unit === 'radians' ? 1 : 180 / Math.PI); 
+      break;
+    case 'acos': 
+      result = Math.acos(value) * (unit === 'radians' ? 1 : 180 / Math.PI); 
+      break;
+    case 'atan': 
+      result = Math.atan(value) * (unit === 'radians' ? 1 : 180 / Math.PI); 
+      break;
+    case 'sec': 
+      result = 1 / (unit === 'radians' ? Math.cos(value) : Math.cos(value * Math.PI / 180)); 
+      break;
+    case 'csc': 
+      result = 1 / (unit === 'radians' ? Math.sin(value) : Math.sin(value * Math.PI / 180)); 
+      break;
+    case 'cot': 
+      result = 1 / (unit === 'radians' ? Math.tan(value) : Math.tan(value * Math.PI / 180)); 
+      break;
+    case 'asec': 
+      result = Math.acos(1 / value) * (unit === 'radians' ? 1 : 180 / Math.PI); 
+      break;
+    case 'acsc': 
+      result = Math.asin(1 / value) * (unit === 'radians' ? 1 : 180 / Math.PI); 
+      break;
+    case 'acot': 
+      result = Math.PI / 2 - Math.atan(value) * (unit === 'radians' ? 1 : 180 / Math.PI); 
+      break;
+    case 'ln': 
+      result = Math.log(value); 
+      break;
+    case 'log10': 
+      result = Math.log10(value); 
+      break;
+    default:
+      document.getElementById('result').textContent = "Invalid operation.";
+      return;
+  }
+
+  // Display π in the result if applicable
+  result = result.toString().replace(/3.141592653589793/g, 'π'); 
+
+  document.getElementById('result').textContent = `Result: ${result}`;
+}
+
+  </script>
+
+</body>
+</html>

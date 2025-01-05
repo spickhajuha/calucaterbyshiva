@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>LCM/HCF Calculator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+    }
+    .container {
+      margin: 20px auto;
+      width: 350px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    #results {
+      margin-top: 20px;
+    }
+    #results p {
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>LCM/HCF Calculator</h1>
+    <label for="numbers">Enter numbers (separated by commas):</label><br>
+    <input type="text" id="numbers" placeholder="e.g., 12, 18, 30"><br><br>
+    <button onclick="calculate()">Calculate</button>
+    <div id="results">
+      <p>LCM: <span id="lcm"></span></p>
+      <p>HCF: <span id="hcf"></span></p>
+    </div>
+  </div>
+
+  <script>
+    function findGCD(arr) {
+      if (arr.length === 0) {
+        return 1; // Handle empty array
+      }
+      let result = arr[0];
+      for (let i = 1; i < arr.length; i++) {
+        result = findGCDTwo(result, arr[i]);
+      }
+      return result;
+    }
+
+    function findGCDTwo(a, b) {
+      if (b === 0) {
+        return a;
+      }
+      return findGCDTwo(b, a % b);
+    }
+
+    function findLCM(arr) {
+      if (arr.length === 0) {
+        return 1; // Handle empty array
+      }
+      let lcm = arr[0];
+      for (let i = 1; i < arr.length; i++) {
+        lcm = (lcm * arr[i]) / findGCDTwo(lcm, arr[i]);
+      }
+      return lcm;
+    }
+
+    function calculate() {
+      const input = document.getElementById('numbers').value;
+      const numbers = input.split(',').map(Number);
+
+      if (numbers.some(isNaN)) {
+        alert("Please enter valid numbers.");
+        return;
+      }
+
+      const lcm = findLCM(numbers);
+      const hcf = findGCD(numbers);
+
+      document.getElementById('lcm').textContent = lcm;
+      document.getElementById('hcf').textContent = hcf;
+    }
+
+    document.getElementById('calculateButton').addEventListener('click', calculate); 
+  </script>
+</body>
+</html>

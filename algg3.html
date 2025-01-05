@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Cubic Equation Solver</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Cubic Equation Solver</h1>
+    <label for="a">Coefficient of x³ (a):</label>
+    <input type="number" id="a" step="any">
+    <label for="b">Coefficient of x² (b):</label>
+    <input type="number" id="b" step="any">
+    <label for="c">Coefficient of x (c):</label>
+    <input type="number" id="c" step="any">
+    <label for="d">Constant (d):</label>
+    <input type="number" id="d" step="any">
+    <button onclick="solveCubic()">Solve</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function solveCubic() {
+      const a = parseFloat(document.getElementById('a').value);
+      const b = parseFloat(document.getElementById('b').value);
+      const c = parseFloat(document.getElementById('c').value);
+      const d = parseFloat(document.getElementById('d').value);
+
+      if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(d)) {
+        document.getElementById('result').textContent = "Please enter valid numbers.";
+        return;
+      }
+
+      // Implementation of Cardano's method for solving cubic equations
+      // (Simplified for demonstration purposes)
+
+      // 1. Normalize the equation:
+      const normalized_b = b / a;
+      const normalized_c = c / a;
+      const normalized_d = d / a;
+
+      // 2. Depress the cubic:
+      const p = (3 * normalized_c - normalized_b * normalized_b) / 3;
+      const q = (2 * normalized_b * normalized_b * normalized_b - 9 * normalized_b * normalized_c + 27 * normalized_d) / 27;
+
+      // 3. Calculate the discriminant:
+      const discriminant = (q * q / 4) + (p * p * p / 27);
+
+      let root1, root2, root3;
+
+      if (discriminant > 0) {
+        // One real root and two complex conjugate roots
+        const u = Math.cbrt(-q / 2 + Math.sqrt(discriminant));
+        const v = Math.cbrt(-q / 2 - Math.sqrt(discriminant));
+        root1 = u + v - normalized_b / 3;
+        // Complex roots calculations would be here, but omitted for simplicity
+        document.getElementById('result').textContent = `Root: ${root1}`; 
+      } else if (discriminant === 0) {
+        // Three real roots, at least two are equal
+        if (q === 0) { 
+          root1 = root2 = root3 = -normalized_b / 3;
+        } else {
+          root1 = -2 * Math.cbrt(-q / 2) - normalized_b / 3;
+          root2 = root3 = Math.cbrt(-q / 2) - normalized_b / 3;
+        }
+        document.getElementById('result').textContent = `Roots: ${root1}, ${root2}, ${root3}`; 
+      } else {
+        // Three distinct real roots
+        const theta = Math.acos(-q / 2 / Math.sqrt(-p * p * p / 27));
+        root1 = 2 * Math.sqrt(-p / 3) * Math.cos(theta / 3) - normalized_b / 3;
+        root2 = 2 * Math.sqrt(-p / 3) * Math.cos((theta + 2 * Math.PI) / 3) - normalized_b / 3;
+        root3 = 2 * Math.sqrt(-p / 3) * Math.cos((theta - 2 * Math.PI) / 3) - normalized_b / 3;
+        document.getElementById('result').textContent = `Roots: ${root1}, ${root2}, ${root3}`; 
+      }
+    }
+  </script>
+</body>
+</html>

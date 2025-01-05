@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Text to Binary Converter</title>
+<style>
+body {
+  font-family: sans-serif;
+  margin: 20px;
+}
+textarea {
+  width: 300px;
+  height: 100px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+}
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #45fff0;
+  color: black;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<h1>Text to Binary Converter</h1>
+
+<div>
+  <label for="inputText">Enter Text:</label><br>
+  <textarea id="inputText" rows="5" cols="50" placeholder="Enter text here"></textarea>
+</div>
+
+<div>
+  <button onclick="convertToBinary()">Convert to Binary</button>
+  <button onclick="convertToText()">Convert to Text</button>
+
+
+<div>
+  <label for="outputText">Output:</label><br>
+  <textarea id="outputText" rows="5" cols="50" placeholder="Output will appear here" readonly></textarea>
+</div>
+  <br></br>
+  <button onclick="copyToClipboard('outputText')">Copy</button>
+</div>
+<script>
+function convertToBinary() {
+  const input = document.getElementById("inputText").value;
+  let output = "";
+
+  for (let i = 0; i < input.length; i++) {
+    output += input.charCodeAt(i).toString(2) + " "; 
+  }
+
+  document.getElementById("outputText").value = output;
+}
+
+function convertToText() {
+  const input = document.getElementById("inputText").value;
+  let output = "";
+  const binaryCodes = input.split(" ");
+
+  for (let i = 0; i < binaryCodes.length; i++) {
+    output += String.fromCharCode(parseInt(binaryCodes[i], 2));
+  }
+
+  document.getElementById("outputText").value = output;
+}
+
+function copyToClipboard(elementId) {
+  const element = document.getElementById(elementId);
+  element.select();
+  document.execCommand('copy');
+}
+</script>
+
+</body>
+</html>

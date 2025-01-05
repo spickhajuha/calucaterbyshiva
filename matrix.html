@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Matrix Inverse Calculator (Adjoint Method)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        #calculator {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .matrix-input-container {
+            display: grid;
+            grid-template-columns: repeat(3, 50px); 
+            grid-gap: 5px; 
+        }
+
+        .matrix-input {
+            width: 40px;
+            height: 30px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        #calculateButton {
+            padding: 10px 20px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: #0095f6;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        #output-container {
+            text-align: center;
+        }
+
+        .matrix-output-container {
+            display: grid;
+            grid-template-columns: repeat(3, 50px); 
+            grid-gap: 5px;
+        }
+
+        .matrix-output {
+            width: 40px;
+            height: 30px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Matrix Inverse Calculator (Adjoint Method)</h1>
+    <div id="calculator">
+        <div class="input-container">
+            <h2>Enter Matrix:</h2>
+            <div class="matrix-input-container">
+                <input type="number" class="matrix-input" id="a11">
+                <input type="number" class="matrix-input" id="a12">
+                <input type="number" class="matrix-input" id="a13">
+                <input type="number" class="matrix-input" id="a21">
+                <input type="number" class="matrix-input" id="a22">
+                <input type="number" class="matrix-input" id="a23">
+                <input type="number" class="matrix-input" id="a31">
+                <input type="number" class="matrix-input" id="a32">
+                <input type="number" class="matrix-input" id="a33">
+            </div>
+            <button id="calculateButton">Calculate Inverse</button>
+        </div>
+        <div id="output-container">
+            <h2>Result:</h2>
+            <div class="matrix-output-container">
+                <input type="text" class="matrix-output" id="r11" readonly>
+                <input type="text" class="matrix-output" id="r12" readonly>
+                <input type="text" class="matrix-output" id="r13" readonly>
+                <input type="text" class="matrix-output" id="r21" readonly>
+                <input type="text" class="matrix-output" id="r22" readonly>
+                <input type="text" class="matrix-output" id="r23" readonly>
+                <input type="text" class="matrix-output" id="r31" readonly>
+                <input type="text" class="matrix-output" id="r32" readonly>
+                <input type="text" class="matrix-output" id="r33" readonly>
+            </div>
+            <p id="determinant"></p> 
+        </div>
+    </div>
+
+    <script>
+        const calculateButton = document.getElementById('calculateButton');
+        const inputElements = document.querySelectorAll('.matrix-input');
+        const outputElements = document.querySelectorAll('.matrix-output');
+        const determinantDisplay = document.getElementById('determinant');
+
+        function getMatrixFromInputs() {
+            const matrix = [];
+            for (let i = 0; i < 3; i++) {
+                matrix.push([
+                    parseFloat(document.getElementById(`a${i + 1}1`).value),
+                    parseFloat(document.getElementById(`a${i + 1}2`).value),
+                    parseFloat(document.getElementById(`a${i + 1}3`).value)
+                ]);
+            }
+            return matrix;
+        }
+
+        function calculateDeterminant(matrix) {
+            return matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]) -
+                   matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]) +
+                   matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0]);
+        }
+
+        function gcd(a, b) {
+            return b === 0 ? a : gcd(b, a % b);
+        }
+
+        function simplifyFraction(numerator, denominator) {
+            const divisor = gcd(numerator, denominator);
+            return [numerator / divisor, denominator / divisor];
+        }
+
+        function calculateInverse(matrix) {
+            const determinant = calculateDeterminant(matrix);
+
+            if (determinant === 0) {
+                alert("मैट्रिक्स एकवचन है (इनवर्टिबल नहीं है).");
+                outputElements.forEach(el => el.value = "");
+                determinantDisplay.textContent = "निर्धारक: 0";
+                return;
+            }
+
+            // Calculate adjoint (transpose of cofactor matrix)
+            const cofactorMatrix = [
+                [(matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]), 
+                 -(matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]), 
+                  (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0])],
+                [-(matrix[0][1] * matrix[2][2] - matrix[0][2] * matrix[2][1]), 
+                 (matrix[0][0] * matrix[2][2] - matrix[0][2] * matrix[2][0]), 
+                 -(matrix[0][0] * matrix[2][1] - matrix[0][1] * matrix[2][0])],
+                [(matrix[0][1] * matrix[1][2] - matrix[0][2] * matrix[1][1]), 
+                 -(matrix[0][0] * matrix[1][2] - matrix[0][2] * matrix[1][0]), 
+                  (matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0])]
+            ];
+
+            const transpose = [
+                [cofactorMatrix[0][0], cofactorMatrix[1][0], cofactorMatrix[2][0]],
+                [cofactorMatrix[0][1], cofactorMatrix[1][1], cofactorMatrix[2][1]],
+                [cofactorMatrix[0][2], cofactorMatrix[1][2], cofactorMatrix[2][2]]
+            ];
+
+            // Calculate inverse: adj(A) / |A| 
+            const inverse = transpose.map(row => row.map(element => element / determinant));
+
+            outputElements.forEach((el, index) => {
+                const numerator = inverse[Math.floor(index / 3)][index % 3];
+                const denominator = determinant;
+                const [simplifiedNumerator, simplifiedDenominator] = simplifyFraction(numerator, denominator); 
+                el.value = `${simplifiedNumerator}/${simplifiedDenominator}`; 
+            });
+
+            determinantDisplay.textContent = `निर्धारक: ${determinant}`;
+        }
+
+        calculateButton.addEventListener('click', () => {
+            const matrix = getMatrixFromInputs();
+            calculateInverse(matrix);
+        });
+    </script>
+
+</body>
+</

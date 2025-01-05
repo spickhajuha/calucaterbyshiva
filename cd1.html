@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Text Encoder/Decoder</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+    }
+
+    .container {
+      background-color: #f0f0f0;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 10px;
+      border-radius: 3px;
+      padding: 5px;
+      resize: vertical;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    select {
+      padding: 5px;
+      border-radius: 3px;
+      border: 1px solid #ccc;
+    }
+
+    #result {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 3px;
+    }
+
+    #copyBtn {
+      margin-left: 10px;
+      background-color: #2196F3; 
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Text Encoder/Decoder</h1>
+
+  <div class="container">
+    <label for="inputText">Enter Text:</label><br>
+    <textarea id="inputText" placeholder="Enter text here"></textarea><br>
+
+    <label for="encodingMethod">Encoding Method:</label><br>
+    <select id="encodingMethod">
+      <option value="binary">Binary</option>
+      <option value="hexadecimal">Hexadecimal</option>
+      <option value="base64(Only support English)">Base64</option>
+      
+    </select><br><br>
+
+    <button id="encodeBtn">Encode</button>
+    <button id="decodeBtn">Decode</button>
+    <button id="copyBtn">Copy</button><br><br>
+
+    <label for="outputText">Result:</label><br>
+    <textarea id="outputText" placeholder="Encoded/Decoded text will appear here" readonly></textarea>
+  </div>
+
+  <script>
+const encodeBtn = document.getElementById('encodeBtn');
+const decodeBtn = document.getElementById('decodeBtn');
+const copyBtn = document.getElementById('copyBtn');
+const inputText = document.getElementById('inputText');
+const outputText = document.getElementById('outputText');
+const encodingMethodSelect = document.getElementById('encodingMethod');
+
+function textToBinary(text) {
+  let binaryStr = "";
+  for (let char of text) {
+    binaryStr += char.charCodeAt(0).toString(2).padStart(8, '0') + " "; 
+  }
+  return binaryStr;
+}
+
+function binaryToText(binary) {
+  const binaryArray = binary.split(" ").filter(Boolean); 
+  let text = "";
+  for (let bin of binaryArray) {
+    text += String.fromCharCode(parseInt(bin, 2));
+  }
+  return text;
+}
+
+function textToHex(text) {
+  let hexStr = "";
+  for (let char of text) {
+    hexStr += char.charCodeAt(0).toString(16).toUpperCase() + " "; 
+  }
+  return hexStr;
+}
+
+function hexToText(hex) {
+  const hexArray = hex.split(" ").filter(Boolean); 
+  let text = "";
+  for (let hexValue of hexArray) {
+    text += String.fromCharCode(parseInt(hexValue, 16));
+  }
+  return text;
+}
+
+function textToBase64(text) {
+  return btoa(text); 
+}
+
+function base64ToText(base64) {
+  return atob(base64); 
+}
+
+function textToMorseCode(text) {
+  const morseCodeDict = {
+    'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
+    'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
+    'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
+    'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+    'Y': '-.--', 'Z': '--..',
+    '0': '-----', '1': '.----', '2': '..---', '3': '...--', '4': '....-',
+    '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.',
+    ' ': ' / '  // Space character in Morse code
+  };
+  let morseCodeStr = "";
+  for (let char of text.toUpperCase()) {
+    if (morseCodeDict[char]) {
+      morseCodeStr += morseCodeDict[char] + " ";
+    } else {
+      morseCodeStr += "   "; // Space for unknown characters
+    }
+  }
+  return morseCodeStr;
+}
+
+function morseCodeToText(morseCode) {
+  const morseCodeDict = {
+    '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.': 'E', '..-.': 'F', 
+    '--.': 'G', '....': 'H', '..': 'I', '.---': 'J', '-.-': 'K', '.-..': 'L', 
+    '--': 'M', '-.': 'N', '---': 'O', '.--.': 'P', '--.-': 'Q', '.-.': 'R', 
+    '...': 'S', '-': 'T', '..-': 'U', '...-': 'V', '.--': 'W', '-..-': 'X', 
+    '-.--': 'Y', '--..': 'Z',  ' / ': ' ',
+    '-----': '0', '.----': '1', '..---': '2', '...--': '3', '....-': '4', 
+    '.....': '5', '-....': '6', '--...': '7', '---..': '8', '----.': '9',
+    ' / ': ' ' // Space character in Morse code
+  };
+  const morseCodeArray = morseCode.trim().split(" ");
+  let text = "";
+  for (let code of morseCodeArray) {
+    if (code in morseCodeDict) {
+      text += morseCodeDict[code];
+    }
+  }
+  return text;
+}
+
+function encodeText() {
+  const selectedMethod = encodingMethodSelect.value;
+  let encodedText;
+
+  switch (selectedMethod) {
+    case "binary":
+      encodedText = textToBinary(inputText.value);
+      break;
+    case "hexadecimal":
+      encodedText = textToHex(inputText.value);
+      break;
+    case "base64":
+      encodedText = textToBase64(inputText.value);
+      break;
+    case "morse":
+      encodedText = textToMorseCode(inputText.value);
+      break;
+    default:
+      encodedText = "Invalid encoding method";
+  }
+
+  outputText.value = encodedText;
+}
+
+function decodeText() {
+  const selectedMethod = encodingMethodSelect.value;
+  let decodedText;
+
+  switch (selectedMethod) {
+    case "binary":
+      decodedText = binaryToText(inputText.value);
+      break;
+    case "hexadecimal":
+      decodedText = hexToText(inputText.value);
+      break;
+    case "base64":
+      decodedText = base64ToText(inputText.value);
+      break;
+    case "morse":
+      decodedText = morseCodeToText(inputText.value);
+      break;
+    default:
+      decodedText = "Invalid decoding method";
+  }
+
+  outputText.value = decodedText;
+}
+
+encodeBtn.addEventListener('click', encodeText);
+decodeBtn.addEventListener('click', decodeText);
+
+copyBtn.addEventListener('click', () => {
+  outputText.select();
+  document.execCommand('copy');
+});
+
+</script>

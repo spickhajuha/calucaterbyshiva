@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Triangle Calculator</title>
+<style>
+body {
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f0f0;
+}
+
+.container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+#result {
+  margin-top: 20px;
+  font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Triangle Calculator</h2>
+  <label for="sideAB">Side AB:</label>
+  <input type="number" id="sideAB" required><br><br>
+
+  <label for="sideBC">Side BC:</label>
+  <input type="number" id="sideBC" required><br><br>
+
+  <label for="sideCA">Side CA:</label>
+  <input type="number" id="sideCA" required><br><br>
+
+  <button onclick="calculate()">Calculate</button>
+
+  <div id="result"></div>
+</div>
+
+<script>
+function calculate() {
+  const sideAB = parseFloat(document.getElementById('sideAB').value);
+  const sideBC = parseFloat(document.getElementById('sideBC').value);
+  const sideCA = parseFloat(document.getElementById('sideCA').value);
+
+  if (isNaN(sideAB) || isNaN(sideBC) || isNaN(sideCA)) {
+    document.getElementById('result').innerHTML = "Invalid input. Please enter numerical values.";
+    return;
+  }
+
+  // Check if the sides form a valid triangle
+  if (sideAB + sideBC <= sideCA || sideAB + sideCA <= sideBC || sideBC + sideCA <= sideAB) {
+    document.getElementById('result').innerHTML = "Invalid input. These sides cannot form a triangle.";
+    return;
+  }
+
+  const s = (sideAB + sideBC + sideCA) / 2;
+  const area = Math.sqrt(s * (s - sideAB) * (s - sideBC) * (s - sideCA));
+  const perimeter = sideAB + sideBC + sideCA;
+
+  // Calculate angles using Law of Cosines
+  const angleA = Math.acos((sideBC * sideBC + sideCA * sideCA - sideAB * sideAB) / (2 * sideBC * sideCA)) * (180 / Math.PI);
+  const angleB = Math.acos((sideAB * sideAB + sideCA * sideCA - sideBC * sideBC) / (2 * sideAB * sideCA)) * (180 / Math.PI);
+  const angleC = Math.acos((sideAB * sideAB + sideBC * sideBC - sideCA * sideCA) / (2 * sideAB * sideBC)) * (180 / Math.PI);
+
+  document.getElementById('result').innerHTML = `
+    Area: ${area.toFixed(2)}<br>
+    Perimeter: ${perimeter.toFixed(2)}<br>
+    Angle A: ${angleA.toFixed(2)} degrees<br>
+    Angle B: ${angleB.toFixed(2)} degrees<br>
+    Angle C: ${angleC.toFixed(2)} degrees
+  `;
+}
+</script>
+
+</body>
+</html>

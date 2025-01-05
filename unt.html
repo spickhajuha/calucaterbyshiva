@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Matrix Calculator</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="number"] {
+            width: 50px;
+            height: 30px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #F50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Matrix Calculator</h1>
+        <label for="rows">Rows:</label>
+        <input type="number" id="rows" min="1" value="3"><br></br>
+        <label for="cols">Columns:</label>
+        <input type="number" id="cols" min="1" value="3">
+        <button onclick="createMatrix()">Create Matrix</button>
+
+        <div id="matrixContainer"></div>
+
+        <button onclick="calculate()">Calculate</button>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function createMatrix() {
+            const rows = parseInt(document.getElementById("rows").value);
+            const cols = parseInt(document.getElementById("cols").value);
+            const matrixContainer = document.getElementById("matrixContainer");
+            matrixContainer.innerHTML = "";
+
+            for (let i = 0; i < rows; i++) {
+                const row = document.createElement("div");
+                for (let j = 0; j < cols; j++) {
+                    const input = document.createElement("input");
+                    input.type = "number";
+                    input.id = `matrix${i}${j}`;
+                    row.appendChild(input);
+                }
+                matrixContainer.appendChild(row);
+            }
+        }
+
+        function getMatrix() {
+            const rows = parseInt(document.getElementById("rows").value);
+            const cols = parseInt(document.getElementById("cols").value);
+
+            if (rows !== cols) {
+                return Array(rows).fill([]).map(() => Array(cols).fill(NaN)); 
+            }
+
+            const matrix = [];
+
+            for (let i = 0; i < rows; i++) {
+                const row = [];
+                for (let j = 0; j < cols; j++) {
+                    const input = document.getElementById(`matrix${i}${j}`);
+                    row.push(parseFloat(input.value));
+                }
+                matrix.push(row);
+            }
+
+            return matrix;
+        }
+
+        function calculate() {
+            const matrix = getMatrix();
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "";
+
+            // Check if all elements are NaN (meaning rows != cols)
+            if (matrix.every(row => row.every(element => Number.isNaN(element)))) {
+                resultsDiv.innerHTML = "<p>Matrix is not square. Calculations are not possible.</p>";
+                return;
+            }
+
+            // Calculate determinant
+            const determinant = calculateDeterminant(matrix);
+            const determinantResult = document.createElement("p");
+            determinantResult.textContent = `Determinant: ${determinant}`;
+            resultsDiv.appendChild(determinantResult);
+
+            // Calculate inverse
+            if (determinant !== 0) {
+                const inverse = calculateInverse(matrix);
+                const inverseTable = createTable(inverse);
+                const inverseResult = document.createElement("p");
+                inverseResult.textContent = "Inverse:";
+                resultsDiv.appendChild(inverseResult);
+                resultsDiv.appendChild(inverseTable);
+            } else {
+                const inverseResult = document.createElement("p");
+                inverseResult.textContent = "Matrix is singular (no inverse)";
+                resultsDiv.appendChild(inverseResult);
+            }
+
+            // Calculate adjoint
+            const adjoint = calculateAdjoint(matrix);
+            const adjointTable = createTable(adjoint);
+            const adjointResult = document.createElement("p");
+            adjointResult.textContent = "Adjoint:";
+            resultsDiv.appendChild(adjointResult);
+            resultsDiv.appendChild(adjointTable);
+        }
+
+        // Helper functions for matrix operations
+        function calculateDeterminant(matrix) {
+            if (matrix.length === 1) {
+                return matrix[0][0];
+            } else if (matrix.length === 2) {
+                return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+            } else {
+                let determinant = 0;
+                for (let i = 0; i < matrix.length; i++) {
+                    determinant += 
+                        matrix[0][i] * 
+                        Math.pow(-1, i) * 
+                        calculateDeterminant(getMinor(matrix, 0, i));
+                }
+                return determinant;
+            }
+        }
+
+        function getMinor(matrix, row, col) {
+            const minor = [];
+            for (let i = 0; i < matrix.length; i++) {
+                if (i === row) continue;
+                minor.push([]);
+                for (let j = 0; j < matrix[0].length; j++) {
+                    if (j === col) continue;
+                    minor[minor.length - 1].push(matrix[i][j]);
+                }
+            }
+            return minor;
+        }
+
+        function calculateAdjoint(matrix) {
+            const rows = matrix.length;
+            const cols = matrix[0].length;
+            const adjoint = [];
+
+            for (let i = 0; i < rows; i++) {
+                adjoint.push([]);
+                for (let j = 0; j < cols; j++) {
+                    adjoint[i].push(
+                        Math.pow(-1, i + j) * calculateDeterminant(getMinor(matrix, i, j))
+                    );
+                }
+            }
+
+            // Transpose the adjoint matrix
+            for (let i = 0; i < rows; i++) {
+                for (let j = i + 1; j < cols; j++) {
+                    [adjoint[i][j], adjoint[j][i]] = [adjoint[j][i], adjoint[i][j]];
+                }
+            }
+
+            return adjoint;
+        }
+
+        function calculateInverse(matrix) {
+            const determinant = calculateDeterminant(matrix);
+
+            if (determinant === 0) {
+                return null; // Matrix is singular, no inverse exists
+            }
+
+            const adjoint = calculateAdjoint(matrix);
+
+            // Calculate inverse using the formula: Inverse = (1/determinant) * Adjoint
+            const inverse = [];
+            for (let i = 0; i < adjoint.length; i++) {
+                inverse.push([]);
+                for (let j = 0; j < adjoint[0].length; j++) {
+                    inverse[i].push(adjoint[i][j] / determinant);
+                }
+            }
+
+            return inverse;
+        }
+
+        function createTable(matrix) {
+            const table = document.createElement("table");
+            for (let i = 0; i < matrix.length; i++) {
+                const row = table.insertRow();
+                for (let j = 0; j < matrix[i].length; j++) {
+                    const cell = row.insertCell();
+                    if (Number.isNaN(matrix[i][j])) {
+                        cell.textContent = "NaN"; 
+                    } else if (Number.isInteger(matrix[i][j])) { 
+                        cell.textContent = matrix[i][j]; 
+                    } else {
+                        cell.textContent = matrix[i][j].toFixed(2); 
+                    }
+                }
+            }
+            return table;
+        }
+    </script>
+</body>
+</html>

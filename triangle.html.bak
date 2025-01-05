@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Triangle Calculator</title>
+<style>
+body {
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f0f0;
+}
+
+.container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+#result {
+  margin-top: 20px;
+  font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Triangle Calculator</h2>
+  <div>
+    <label for="sideAB">Side AB:</label>
+    <input type="number" id="sideAB" step="any"><br><br>
+
+    <label for="sideBC">Side BC:</label>
+    <input type="number" id="sideBC" step="any"><br><br>
+
+    <label for="sideCA">Side CA:</label>
+    <input type="number" id="sideCA" step="any"><br><br>
+
+    <label for="angleA">Angle A (degrees):</label>
+    <input type="number" id="angleA" step="any"><br><br>
+
+    <label for="angleB">Angle B (degrees):</label>
+    <input type="number" id="angleB" step="any"><br><br>
+
+    <label for="angleC">Angle C (degrees):</label>
+    <input type="number" id="angleC" step="any"><br><br>
+  </div>
+
+  <button onclick="calculate()">Calculate</button>
+
+  <div id="result"></div>
+</div>
+
+<script>
+function calculate() {
+  const sideAB = parseFloat(document.getElementById('sideAB').value);
+  const sideBC = parseFloat(document.getElementById('sideBC').value);
+  const sideCA = parseFloat(document.getElementById('sideCA').value);
+  const angleA = parseFloat(document.getElementById('angleA').value);
+  const angleB = parseFloat(document.getElementById('angleB').value);
+  const angleC = parseFloat(document.getElementById('angleC').value);
+
+  // Determine calculation method based on input
+  let method = "";
+  if (!isNaN(sideAB) && !isNaN(sideBC) && !isNaN(sideCA)) {
+    method = "SSS"; // Three sides
+  } else if (!isNaN(sideAB) && !isNaN(sideBC) && !isNaN(angleC)) {
+    method = "SAS"; // Two sides and included angle
+  } else if (!isNaN(sideAB) && !isNaN(angleB) && !isNaN(angleC)) {
+    method = "ASA"; // Two angles and included side
+  } else if (!isNaN(sideAB) && !isNaN(angleB) && !isNaN(sideC)) {
+    method = "AAS"; // Two angles and a non-included side
+  } else if (!isNaN(angleA) && !isNaN(angleB) && !isNaN(sideC)) {
+    method = "AAS"; // Two angles and a non-included side
+  }
+
+  // Calculate based on the determined method
+  if (method === "SSS") {
+    // Calculate angles using Law of Cosines
+    calculateAngles(sideAB, sideBC, sideCA);
+  } else if (method === "SAS") {
+    calculateThirdSide(sideAB, sideBC, angleC); 
+    calculateAngles(sideAB, sideBC, sideCA); 
+  } else if (method === "ASA" || method === "AAS") {
+    calculateThirdAngle(angleA, angleB);
+    calculateSides(sideAB, angleB, angleC, sideBC, angleA, sideCA);
+  } else {
+    document.getElementById('result').innerHTML = "Insufficient input. Please provide three values (at least one side).";
+    return;
+  }
+
+  function calculateAngles(a, b, c) {
+    const angleA = Math.acos((b * b + c * c - a * a) / (2 * b * c)) * (180 / Math.PI);
+    const angleB = Math.acos((a * a + c * c - b * b) / (2 * a * c)) * (180 / Math.PI);
+    const angleC = Math.acos((a * a + b * b - c * c) / (2 * a * b)) * (180 / Math.PI);
+    displayResults(a, b, c, angleA, angleB, angleC);
+  }
+
+  function calculateThirdSide(a, b, angleC) {
+    const sideC = Math.sqrt(a * a + b * b - 2 * a * b * Math.cos(angleC * Math.PI / 180));
+    return sideC;
+  }
+
+  function calculateThirdAngle(angleA, angleB) {
+    return 180 - angleA - angleB;
+  }
+
+  function calculateSides(a, angleB, angleC, b, angleA, c) {
+    // Use Law of Sines
+    const sinA = Math.sin(angleA * Math.PI / 180);
+    const sinB = Math.sin(angleB * Math.PI / 180);
+    const sinC = Math.sin(angleC * Math.PI / 180);
+
+    if (!isNaN(a) && !isNaN(angleB) && !isNaN(angleC)) {
+      b = a * sinB / sinA;
+      c = a * sinC / sinA;
+    } else if (!isNaN(b) && !isNaN(angleA) && !isNaN(angleC)) {
+      a = b * sinA / sinB;
+      c = b * sinC / sinB;
+    } else if (!isNaN(c) && !isNaN(angleA) && !isNaN(angleB)) {
+      a = c * sinA / sinC;
+      b = c * sinB / sinC;
+    }
+
+    return { a, b, c };
+  }
+
+  function displayResults(a, b, c, angleA, angleB, angleC) {
+    const s = (a + b + c) / 2;
+    const area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
+    const perimeter = a + b + c;
+
+    document.getElementById('result').innerHTML = `
+      Area: ${area.toFixed(2)}<br>
+      Perimeter: ${perimeter.toFixed(2)}<br>
+      Angle A: ${angleA.toFixed(2)} degrees<br>
+      Angle B: ${angleB.toFixed(2)} degrees<br>
+      Angle C: ${angleC.toFixed(2)} degrees
+    `;
+  }
+}
+</script>
+
+</body>
+</html>
